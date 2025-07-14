@@ -1,7 +1,15 @@
 """
 Aplicación principal Flask para el sistema de reservas de parqueo.
 Maneja todas las rutas y la comunicación entre frontend y backend.
+
+Atributos principales:
+    app: Instancia principal de Flask
+    gestor_usuarios: Manejador de operaciones CRUD para usuarios
+    gestor_vehiculos: Manejador de operaciones CRUD para vehículos
+    gestor_lista_espera: Manejador del sistema de cola de espera
+    gestor_salidas: Manejador de salidas temporales de vehículos
 """
+
 from flask import Flask, render_template, request, redirect, url_for
 import pyodbc
 from app.db_config import get_conexion
@@ -11,6 +19,7 @@ from app.models.lista_espera import ListaEspera, GestorListaEspera
 from app.models.salidas_temporales import SalidaTemporal, GestorSalidasTemporales
 from datetime import datetime, timedelta
 
+# Configuración inicial de Flask
 app = Flask(
     __name__,
     template_folder='app/templates',
@@ -18,6 +27,7 @@ app = Flask(
 )
 app.config['DEBUG'] = True
 
+# Inicialización de gestores
 gestor_usuarios = GestorUsuarios()
 gestor_vehiculos = GestorVehiculos()
 gestor_lista_espera = GestorListaEspera()
@@ -25,6 +35,12 @@ gestor_salidas = GestorSalidasTemporales()
 
 @app.route('/')
 def mostrar_dashboard():
+    """
+    Ruta principal que muestra el dashboard del sistema.
+    
+    Returns:
+        template: Renderiza index.html con los datos del sistema
+    """
     try:
         datos = {
             'usuarios': gestor_usuarios.obtener_todos(),
@@ -45,6 +61,12 @@ def mostrar_dashboard():
 
 @app.route('/usuarios')
 def listar_usuarios():
+    """
+    Lista todos los usuarios registrados.
+    
+    Returns:
+        template: Renderiza usuarios.html con la lista de usuarios
+    """
     try:
         usuarios = gestor_usuarios.obtener_todos()
         return render_template('usuarios.html', usuarios=usuarios)
@@ -54,6 +76,18 @@ def listar_usuarios():
 
 @app.route('/usuarios/crear', methods=['POST'])
 def crear_usuario():
+    """
+    Crea un nuevo usuario en el sistema.
+    
+    Args (form):
+        cedula: Identificación del usuario
+        nombre: Nombre completo
+        telefono: Número de contacto
+        email: Correo electrónico (opcional)
+    
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         campos_requeridos = ['cedula', 'nombre', 'telefono']
         if not all(campo in request.form for campo in campos_requeridos):
@@ -77,6 +111,15 @@ def crear_usuario():
 
 @app.route('/usuarios/eliminar/<int:id_usuario>')
 def eliminar_usuario(id_usuario):
+    """
+    Elimina un usuario del sistema.
+    
+    Args:
+        id_usuario: ID del usuario a eliminar
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         if gestor_usuarios.eliminar(id_usuario):
             return redirect(url_for('mostrar_dashboard'))
@@ -89,6 +132,12 @@ def eliminar_usuario(id_usuario):
 
 @app.route('/vehiculos')
 def listar_vehiculos():
+    """
+    Lista todos los vehículos registrados.
+    
+    Returns:
+        template: Renderiza vehiculos.html con la lista de vehículos
+    """
     try:
         vehiculos = gestor_vehiculos.obtener_todos()
         return render_template('vehiculos.html', vehiculos=vehiculos)
@@ -98,6 +147,18 @@ def listar_vehiculos():
 
 @app.route('/vehiculos/crear', methods=['POST'])
 def crear_vehiculo():
+    """
+    Crea un nuevo vehículo en el sistema.
+    
+    Args (form):
+        placa: Número de placa
+        marca: Marca del vehículo
+        modelo: Modelo del vehículo
+        id_usuario: ID del propietario
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         campos_requeridos = ['placa', 'marca', 'modelo', 'id_usuario']
         if not all(campo in request.form for campo in campos_requeridos):
@@ -123,6 +184,15 @@ def crear_vehiculo():
 
 @app.route('/vehiculos/eliminar/<int:id_vehiculo>')
 def eliminar_vehiculo(id_vehiculo):
+    """
+    Elimina un vehículo del sistema.
+    
+    Args:
+        id_vehiculo: ID del vehículo a eliminar
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         if gestor_vehiculos.eliminar(id_vehiculo):
             return redirect(url_for('mostrar_dashboard'))
@@ -135,6 +205,12 @@ def eliminar_vehiculo(id_vehiculo):
 
 @app.route('/lista_espera')
 def listar_espera():
+    """
+    Lista todos los vehículos en espera.
+    
+    Returns:
+        template: Renderiza lista_espera.html con la lista de espera
+    """
     try:
         lista_espera = gestor_lista_espera.obtener_todos()
         return render_template('lista_espera.html', lista_espera=lista_espera)
@@ -144,6 +220,15 @@ def listar_espera():
 
 @app.route('/lista_espera/agregar', methods=['POST'])
 def agregar_lista_espera():
+    """
+    Agrega un vehículo a la lista de espera.
+    
+    Args (form):
+        id_vehiculo: ID del vehículo a agregar
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         if 'id_vehiculo' not in request.form:
             raise ValueError("Falta el ID del vehículo")
@@ -165,6 +250,12 @@ def agregar_lista_espera():
 
 @app.route('/lista_espera/procesar')
 def procesar_lista_espera():
+    """
+    Procesa el primer vehículo de la lista de espera si hay espacio disponible.
+    
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         lista_espera = gestor_lista_espera.obtener_pendientes()
         if not lista_espera:
@@ -214,6 +305,15 @@ def procesar_lista_espera():
 
 @app.route('/lista_espera/eliminar/<int:id_espera>')
 def eliminar_espera(id_espera):
+    """
+    Elimina un vehículo de la lista de espera.
+    
+    Args:
+        id_espera: ID del registro de espera a eliminar
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         if gestor_lista_espera.eliminar(id_espera):
             return redirect(url_for('mostrar_dashboard'))
@@ -226,6 +326,16 @@ def eliminar_espera(id_espera):
     
 @app.route('/fila/mover', methods=['POST'])
 def mover_vehiculo_fila():
+    """
+    Mueve un vehículo dentro de la fila o lo saca del parqueo.
+    
+    Args (form):
+        id_espacio_fila: ID del espacio de fila
+        id_vehiculo: ID del vehículo a mover
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         id_espacio_fila = request.form.get('id_espacio_fila')
         id_vehiculo = request.form.get('id_vehiculo')
@@ -280,6 +390,15 @@ def mover_vehiculo_fila():
 
 @app.route('/fila/retornar/<int:id_espacio_fila>')
 def retornar_vehiculos_fila(id_espacio_fila):
+    """
+    Retorna los vehículos que salieron temporalmente a su fila original.
+    
+    Args:
+        id_espacio_fila: ID del espacio de fila a retornar vehículos
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         conn = get_conexion()
         cursor = conn.cursor()
@@ -305,6 +424,16 @@ def retornar_vehiculos_fila(id_espacio_fila):
     
 @app.route('/fila/estacionar', methods=['POST'])
 def estacionar_vehiculo_fila():
+    """
+    Estaciona un vehículo en una fila específica o lo agrega a la lista de espera si está llena.
+    
+    Args (form):
+        id_espacio_fila: ID del espacio de fila
+        id_vehiculo: ID del vehículo a estacionar
+        
+    Returns:
+        redirect: Redirecciona al dashboard
+    """
     try:
         id_espacio_fila = request.form.get('id_espacio_fila')
         id_vehiculo = request.form.get('id_vehiculo')
@@ -355,6 +484,12 @@ def estacionar_vehiculo_fila():
         return redirect(url_for('mostrar_dashboard'))
 
 def obtener_datos_espacios_fila():
+    """
+    Obtiene los datos de todos los espacios de fila y sus vehículos asociados.
+    
+    Returns:
+        list: Lista de diccionarios con información de cada espacio de fila
+    """
     espacios = []
     try:
         conn = get_conexion()
@@ -397,3 +532,6 @@ def obtener_datos_espacios_fila():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
