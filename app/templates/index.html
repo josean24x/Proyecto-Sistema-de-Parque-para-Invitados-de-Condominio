@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Parqueo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#instrucciones">Instrucciones</a>
+            <a href="#usuarios">Usuarios</a>
+            <a href="#vehiculos">Vehículos</a>
+            <a href="#espacios-fila">Espacios en Fila</a>
+            <a href="#lista-espera">Lista de Espera</a>
+        </nav>
+    </header>
+
+<div class="main-title">
+    <h1>Condominio La Perla</h1>
+    <h2>Sistema de Parqueo para invitados</h2>
+</div>
+
+    <main>
+<!-- Instrucciones de Uso (Desplegable) -->
+<section id="instrucciones" class="section instrucciones-sticky">
+    <div class="instrucciones-header" onclick="toggleInstrucciones()">
+        <h1>Instrucciones de Uso</h1>
+        <span class="toggle-icon">▼</span>
+    </div>
+    <div class="instrucciones-container" id="instruccionesContent">
+        <div class="instruccion-box">
+            <h3>Gestión de Usuarios</h3>
+            <ul>
+                <li>Registre nuevos usuarios proporcionando sus datos básicos</li>
+                <li>Cada usuario puede tener múltiples vehículos asociados</li>
+                <li>Los usuarios pueden ser eliminados si no tienen vehículos asociados</li>
+            </ul>
+        </div>
+        <div class="instruccion-box">
+            <h3>Gestión de Vehículos</h3>
+            <ul>
+                <li>Registre vehículos asignándolos a un usuario existente</li>
+                <li>Cada vehículo debe tener una placa única</li>
+                <li>Los vehículos pueden ser eliminados si no están estacionados</li>
+            </ul>
+        </div>
+        <div class="instruccion-box">
+            <h3>Estacionamiento en Fila</h3>
+            <ul>
+                <li>Cada fila tiene capacidad para 3 vehículos</li>
+                <li>Los vehículos se estacionan en orden (primero en entrar, último en salir)</li>
+                <li>Si una fila está llena, el vehículo se agregará automáticamente a la lista de espera</li>
+                <li>Para sacar un vehículo, use el botón "Sacar"</li>
+            </ul>
+        </div>
+        <div class="instruccion-box">
+            <h3>Lista de Espera</h3>
+            <ul>
+                <li>Los vehículos en espera se procesan en orden de llegada</li>
+                <li>Cuando hay espacio disponible, el primer vehículo en espera será asignado automáticamente</li>
+                <li>Se puede cancelar la espera en cualquier momento</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+        <!-- Registro de Usuarios -->
+        <section id="usuarios" class="section">
+            <h2>Gestión de Usuarios</h2>
+            <div class="form-container">
+                <h3>Registrar Nuevo Usuario</h3>
+                <form action="{{ url_for('crear_usuario') }}" method="POST">
+                    <div class="form-group">
+                        <label for="cedula">Cédula:</label>
+                        <input type="text" id="cedula" name="cedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Usuario</button>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h3>Usuarios Registrados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.cedula }}</td>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.telefono }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>
+                                <a href="{{ url_for('eliminar_usuario', id_usuario=usuario.id) }}" 
+                                   class="btn-eliminar" onclick="return confirm('¿Está seguro de eliminar este usuario?')">
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Registro de Vehículos -->
+        <section id="vehiculos" class="section">
+            <h2>Gestión de Vehículos</h2>
+            <div class="form-container">
+                <h3>Registrar Nuevo Vehículo</h3>
+                <form action="{{ url_for('crear_vehiculo') }}" method="POST">
+                    <div class="form-group">
+                        <label for="placa">Placa:</label>
+                        <input type="text" id="placa" name="placa" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="marca">Marca:</label>
+                        <input type="text" id="marca" name="marca" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelo">Modelo:</label>
+                        <input type="text" id="modelo" name="modelo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_usuario">Propietario:</label>
+                        <select id="id_usuario" name="id_usuario" required>
+                            <option value="">Seleccione propietario</option>
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre }} - {{ usuario.cedula }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Vehículo</button>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h3>Vehículos Registrados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Propietario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehiculo in vehiculos %}
+                        <tr>
+                            <td>{{ vehiculo.placa }}</td>
+                            <td>{{ vehiculo.marca }}</td>
+                            <td>{{ vehiculo.modelo }}</td>
+                            <td>{{ vehiculo.propietario }}</td>
+                            <td>
+                                <a href="{{ url_for('eliminar_vehiculo', id_vehiculo=vehiculo.id) }}" 
+                                   class="btn-eliminar" onclick="return confirm('¿Está seguro de eliminar este vehículo?')">
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+<!-- Estacionamientos en Fila -->
+<section id="espacios-fila" class="section">
+    <h2>Estacionamientos en Fila</h2>
+    
+    <!-- Imagen del estacionamiento -->
+    <div class="parking-image">
+        <img src="{{ url_for('static', filename='img/parqueo.png') }}" alt="Distribución del Estacionamiento">
+    </div>
+
+    <div class="espacios-container">
+        {% for espacio in espacios_fila %}
+        <div class="espacio-fila">
+            <h3>Espacio {{ espacio.numero_espacio }} ({{ espacio.total_vehiculos }}/3)</h3>
+            
+            <!-- Vehículos en el espacio -->
+            <div class="vehiculos-fila">
+                {% if espacio.vehiculos %}
+                    {% for vehiculo in espacio.vehiculos %}
+                    <div class="vehiculo-item">
+                        <span>{{ vehiculo[1] }} (Pos: {{ vehiculo[2] }})</span>
+                        <form action="{{ url_for('mover_vehiculo_fila') }}" method="POST">
+                            <input type="hidden" name="id_espacio_fila" value="{{ espacio.id }}">
+                            <input type="hidden" name="id_vehiculo" value="{{ vehiculo[0] }}">
+                            <button type="submit">Sacar</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay vehículos</p>
+                {% endif %}
+            </div>
+
+            <!-- Estacionar nuevo vehículo -->
+            <div class="form-container">
+                <form action="{{ url_for('estacionar_vehiculo_fila') }}" method="POST">
+                    <input type="hidden" name="id_espacio_fila" value="{{ espacio.id }}">
+                    <select name="id_vehiculo" required>
+                        <option value="">Seleccione vehículo</option>
+                        {% for vehiculo in vehiculos %}
+                            <option value="{{ vehiculo.id }}">{{ vehiculo.placa }} - {{ vehiculo.marca }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Estacionar</button>
+                </form>
+            </div>
+            {% if espacio.total_vehiculos >= 3 %}
+            <p class="espacio-lleno">Espacio lleno - El vehículo se agregará automáticamente a lista de espera</p>
+            {% endif %}
+
+            <!-- Vehículos movidos temporalmente -->
+            {% if espacio.movimientos_temporales %}
+            <div class="movimientos-temporales">
+                <h4>Movidos Temporalmente</h4>
+                {% for movimiento in espacio.movimientos_temporales %}
+                <div class="movimiento-item">
+                    <span>{{ movimiento.placa }}</span>
+                </div>
+                {% endfor %}
+                <a href="{{ url_for('retornar_vehiculos_fila', id_espacio_fila=espacio.id) }}" 
+                   class="btn-retornar">Retornar Vehículos</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Lista de Espera -->
+<section id="lista-espera" class="section">
+    <h2>Lista de Espera</h2>
+    <div class="lista-espera-container">
+        <div class="table-container">
+            <h3>Vehículos en Espera</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Marca</th>
+                        <th>Propietario</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if lista_espera %}
+                        {% for espera in lista_espera %}
+                        <tr>
+                            <td>{{ espera.placa }}</td>
+                            <td>{{ espera.marca }}</td>
+                            <td>{{ espera.propietario }}</td>
+                            <td>{{ espera.fecha_ingreso }}</td>
+                            <td>
+                                <a href="{{ url_for('eliminar_espera', id_espera=espera.id) }}" 
+                                   class="btn-eliminar">Cancelar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No hay vehículos en espera</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+    </main>
+
+    <script>
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if(!confirm('¿Está seguro de realizar esta acción?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+<script>
+function toggleInstrucciones() {
+    const content = document.getElementById('instruccionesContent');
+    const icon = document.querySelector('.toggle-icon');
+    content.classList.toggle('show');
+    icon.style.transform = content.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+// Opcionalmente, para cerrar las instrucciones cuando se hace scroll
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    if (currentScroll > lastScroll && currentScroll > 100) {
+        const content = document.getElementById('instruccionesContent');
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            document.querySelector('.toggle-icon').style.transform = 'rotate(0deg)';
+        }
+    }
+    lastScroll = currentScroll;
+});
+</script>
+
+</body>
+</html>

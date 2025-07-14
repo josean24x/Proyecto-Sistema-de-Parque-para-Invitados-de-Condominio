@@ -1,0 +1,686 @@
+/* Estilos generales */
+:root {
+    --primary-color: #35424a;
+    --secondary-color: #e8491d;
+    --accent-color: #4CAF50;
+    --light-color: #f4f4f4;
+    --dark-color: #333;
+    --danger-color: #ff4d4d;
+    --warning-color: #ffa500;
+    --success-color: #4CAF50;
+    --info-color: #17a2b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: var(--light-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header y navegación */
+header {
+    background: var(--primary-color);
+    color: white;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--secondary-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+}
+
+header nav ul li {
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: var(--secondary-color);
+}
+
+/* Secciones principales */
+.section {
+    background: white;
+    margin: 30px 0;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--light-color);
+}
+
+/* Estadísticas del dashboard */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-box {
+    background: var(--primary-color);
+    color: white;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+.stat-box h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.stat-box p {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+/* Formularios */
+.form-container {
+    background: #f9f9f9;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.form-container h3 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+input, select, textarea, button {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: var(--secondary-color);
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: -10px;
+}
+
+/* Tablas */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Botones */
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-eliminar, .btn-cancelar {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background: #cc0000;
+}
+
+.btn-cambiar {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-cambiar:hover {
+    background: #3d8b40;
+}
+
+.btn-procesar {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 12px;
+    background: var(--accent-color);
+    color: white;
+    text-align: center;
+    font-weight: 600;
+}
+
+.btn-procesar:hover {
+    background: #3d8b40;
+}
+
+/* Indicadores de estado */
+.status-indicator {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+}
+
+.status-active {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.status-inactive {
+    background-color: #6c757d;
+    color: white;
+}
+
+.status-full {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.status-waiting {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+/* Tipos de espacios */
+.espacio-regular {
+    background-color: #e6f7ff;
+}
+
+.espacio-especial {
+    background-color: #fff2e6;
+}
+
+/* Footer */
+footer {
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    header nav ul {
+        margin-top: 15px;
+        justify-content: center;
+    }
+
+    header nav ul li {
+        margin: 0 10px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .section {
+        padding: 20px;
+    }
+
+    th, td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .stat-box p {
+        font-size: 1.8rem;
+    }
+
+    .form-container, .table-container {
+        padding: 15px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Clases utilitarias */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilos para estacionamiento en fila */
+.espacios-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.espacio-fila {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-width: 300px;
+}
+
+.vehiculos-fila {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.vehiculo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.movimientos-temporales {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-retornar {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    padding: 8px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+}
+
+/* Estilos adicionales para estacionamiento en fila */
+.vehiculo-item form {
+    display: inline;
+}
+
+.btn-mover {
+    background: var(--warning-color);
+    color: var(--dark-color);
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.btn-estacionar {
+    background: var(--success-color);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.movimiento-item {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.espacio-fila select {
+    width: calc(100% - 120px);
+    display: inline-block;
+}
+
+.espacio-fila form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Estado de espacios */
+.espacio-disponible {
+    border-left: 4px solid var(--success-color);
+}
+
+.espacio-lleno {
+    border-left: 4px solid var(--danger-color);
+}
+
+.espacio-movimiento {
+    border-left: 4px solid var(--warning-color);
+}
+
+/* Contador de posiciones */
+.posicion-indicador {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.parking-image {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.parking-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lista-espera-container {
+    margin: 20px 0;
+}
+
+.lista-espera-container .table-container {
+    margin-bottom: 30px;
+}
+
+.lista-espera-container .form-container {
+    max-width: 500px;
+}
+
+.espacio-fila {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.vehiculos-fila {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.vehiculo-item {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.espacio-lleno {
+    color: red;
+    font-weight: bold;
+}
+
+header {
+    background-color: #fff;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+nav a {
+    color: #444;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+nav a:hover {
+    background-color: #f5f5f5;
+    color: #000;
+}
+
+nav a.active {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.instrucciones-sticky {
+    position: sticky;
+    top: 60px; /* Ajusta según la altura de tu header */
+    z-index: 900;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.instrucciones-header {
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.instrucciones-header:hover {
+    background: #f0f0f0;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.instrucciones-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.instrucciones-container.show {
+    max-height: 2000px; /* Ajusta según necesites */
+}
+
+.instruccion-box {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.instruccion-box h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.instruccion-box ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.instruccion-box li {
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.instruccion-box li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #666;
+}
+
+.main-title {
+    text-align: center;
+    padding: 2rem 0;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.main-title h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.main-title h2 {
+    font-size: 1.8rem;
+    color: #666;
+    font-weight: normal;
+}
+
+.parking-image {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+}
+
+.parking-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
